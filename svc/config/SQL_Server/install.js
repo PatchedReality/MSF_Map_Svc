@@ -128,7 +128,7 @@ class MVSF_Map_Install
       const pConfig = { ...Settings.SQL.config };
       let pConn;
       let bResult = false;
-      let match = pConfig.connectionString.match (/database=([^;]+)/i);
+      let sDB = pConfig.connectionString.match (/database=([^;]+)/i);
 
       pConfig.connectionString = pConfig.connectionString.replace (/Database=[^;]*;/i, "");  // Remove database from config to connect without it
       try 
