@@ -71,7 +71,6 @@ class MVSF_Map_Install
    {
       const sSQLFile = path.join (__dirname, sFilename);
       const pConfig = { ...Settings.SQL.config };
-      let pConn;
       
       if (bCreate)
          pConfig.connectionString = pConfig.connectionString.replace (/Database=[^;]*;/i, "");  // Remove database from config to connect without it
@@ -80,36 +79,19 @@ class MVSF_Map_Install
      
       try 
       {
-         // Create connection
-         pConn = await sql.connect (pConfig);
-
          // Read SQL file asynchronously
-         const sSQLContent = fs.readFileSync (sSQLFile, 'utf8');
-         let i, j, x, d, a, aStmt = sSQLContent.split ('DELIMITER');
+         const sTSQL = fs.readFileSync (sSQLFile, 'utf8');
+         const statements = sTSQL.split(/^\s*GO\s*$/im);
 
-         for (i=0; i<aStmt.length; i++)
+         // Create connection
+         await sql.connect (pConfig);
+
+         for (const stmt of statements)
          {
-            if (i > 0)
+            if (stmt.trim ())
             {
-               x = aStmt[i].indexOf ('\n', 0) + 1;
-               d = aStmt[i].slice (0, x).trim ();
-
-               aStmt[i] = aStmt[i].slice (x);
+               await sql.query (stmt);
             }
-            else d = ';';
-
-            if (d == ';')
-            {
-               a = [];
-               a[0] = aStmt[i];
-            }
-            else a = aStmt[i].split (d);
-
-            // Execute SQL
-
-            for (j=0; j<a.length; j++)
-               if (a[j].trim () != '')       // optional
-                  await pConn.request ().query (a[j]);
          }
 
          await sql.close ();
@@ -125,32 +107,37 @@ class MVSF_Map_Install
    async #IsDBInstalled ()
    {
       const pConfig = { ...Settings.SQL.config };
-      let pConn;
       let bResult = false;
-      let sDB = pConfig.connectionString.match (/database=([^;]+)/i);
+      const match = pConfig.connectionString.match(/Database=([^;]+)/i);
 
-      pConfig.connectionString = pConfig.connectionString.replace (/Database=[^;]*;/i, "");  // Remove database from config to connect without it
-      try 
+      if (match)
       {
-         // Create connection
-         pConn = await sql.connect (pConfig);
+         const sDB = match[1];
 
-         // Check if database exists
-         const [aRows] = await pConn.request ().query ("SELECT 1 FROM sys.databases WHERE name='" + sDB + '"');
-
-         if (aRows.length !== 0)
+         pConfig.connectionString = pConfig.connectionString.replace (/Database=[^;]*;/i, "");  // Remove database from config to connect without it
+         try 
          {
-            console.log ('Database is already installed.');
-            bResult = true;
-         }
-         else console.log ('Database does not exists');
+            // Create connection
+            await sql.connect (pConfig);
 
-         await sql.close ();
-      } 
-      catch (err) 
-      {
-         console.error ('Error executing SQL:', err.message);
-      } 
+            // Check if database exists
+            const result = await sql.query `SELECT 1 FROM sys.databases WHERE name= ${sDB}`
+
+            if (result.recordsets[0].length > 0)
+            {
+               console.log ('Database is already installed.');
+               bResult = true;
+            }
+            else console.log ('Database does not exist.');
+
+            await sql.close ();
+         } 
+         catch (err) 
+         {
+            console.error ('Error executing SQL:', err.message);
+         } 
+      }
+      else console.error ('Failed to provide a Database name in the connection string');
       
       return bResult;
    }
