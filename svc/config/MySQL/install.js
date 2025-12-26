@@ -43,7 +43,7 @@ class MVSF_Map_Install
          
 //         this.#ProcessFabricConfig ();
 
-         bResult = await this.#ExecSQL ('MSF_Map.sql', true);
+         bResult = await this.#ExecSQL ('MSF_Map.sql', true, [['[{MSF_Map}]', Settings.SQL.config.database]] );
 
          if (bResult)
             console.log ('Installation successfully completed...');
@@ -68,11 +68,17 @@ class MVSF_Map_Install
       }
    }
 
-   async #ExecSQL (sFilename, bCreate)
+   #EscapeRegExp (sToken)
+   {
+      return sToken.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+   }
+
+   async #ExecSQL (sFilename, bCreate, asToken)
    {
       const sSQLFile = path.join (__dirname, sFilename);
       const pConfig = { ...Settings.SQL.config };
       let pConn;
+      let aRegex = [];
       
       if (bCreate)
          delete pConfig.database; // Remove database from config to connect without it
@@ -81,6 +87,11 @@ class MVSF_Map_Install
      
       try 
       {
+         for (let i=0; i < asToken.length; i++)
+         {
+            aRegex.push (new RegExp (this.#EscapeRegExp (asToken[i][0]), "g"));
+         }            
+
          // Create connection
          pConn = await mysql.createConnection (pConfig);
 
@@ -110,7 +121,15 @@ class MVSF_Map_Install
 
             for (j=0; j<a.length; j++)
                if (a[j].trim () != '')       // optional
-                  await pConn.query (a[j]);
+               {
+                  let stmt = a[j];
+                  for (let i=0; i < aRegex.length; i++)
+                  {
+                     stmt = stmt.replace (aRegex[i], asToken[i][1]);
+                  }
+
+                  await pConn.query (stmt);
+               }
          }
 
          console.log ('Successfully installed (' + sFilename + ')');      

@@ -31,6 +31,7 @@ class MVSF_Map_Install
    constructor ()
    {
       this.#ReadFromEnv (Settings.SQL.config, [ "connectionString" ]);
+      this.#ReadFromEnv (Settings.SQL.install, [ "db_name", "login_name", "nLoginType", "password" ]);
    }
 
    async Run ()
@@ -39,21 +40,42 @@ class MVSF_Map_Install
 
       if (bResult == false)
       {
-         console.log ('Installing Starting...');
+         console.log ('Installion Starting...');
          
 //         this.#ProcessFabricConfig ();
 
-         bResult = await this.#ExecSQL ('MSF_Map.sql', true);
+         console.log ('Creating SQL Login...');
+         if (Settings.SQL.install.nLoginType == 2)
+            bResult = await this.#ExecSQL (null, true, [], "CREATE LOGIN " + Settings.SQL.install.login_name + " WITH PASSWORD = '" + Settings.SQL.install.password + "'");
+         else if (Settings.SQL.install.nLoginType == 1)
+            bResult = await this.#ExecSQL (null, true, [], "CREATE LOGIN " + Settings.SQL.install.login_name + " FROM WINDOWS");
+         else bResult = true;
 
          if (bResult)
-            console.log ('Installation Completed...');
+         {
+            console.log ('Creating Database...');
+            bResult = await this.#ExecSQL ('MSF_Map.sql', true, [['[{MSF_Map}]', Settings.SQL.install.db_name], ['[{Login_Name}]', Settings.SQL.install.login_name]]);
+         }
+
+         if (bResult)
+            console.log ('Installation SUCCESS!!');
+         else
+            console.log ('Installation FAILURE!!');
       }
    }
 
    #GetToken (sToken)
    {
-      const match = sToken.match (/<([^>]+)>/);
-      return match ? match[1] : null;
+      let sResult;
+
+      if (typeof sToken == "string")
+      {
+         const match = sToken.match (/<([^>]+)>/);
+         sResult = match ? match[1] : null;
+      }
+      else sResult = null;
+
+      return sResult;
    }
 
    #ReadFromEnv (Config, aFields)
@@ -67,10 +89,16 @@ class MVSF_Map_Install
       }
    }
 
-   async #ExecSQL (sFilename, bCreate)
+   #EscapeRegExp (sToken)
    {
-      const sSQLFile = path.join (__dirname, sFilename);
+      return sToken.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+   }
+
+   async #ExecSQL (sFilename, bCreate, asToken, sTSQL)
+   {
+      let bResult = false;
       const pConfig = { ...Settings.SQL.config };
+      let aRegex = [];
       
       if (bCreate)
          pConfig.connectionString = pConfig.connectionString.replace (/Database=[^;]*;/i, "");  // Remove database from config to connect without it
@@ -79,29 +107,47 @@ class MVSF_Map_Install
      
       try 
       {
-         // Read SQL file asynchronously
-         const sTSQL = fs.readFileSync (sSQLFile, 'utf8');
+         if (sFilename)
+         {
+            const sSQLFile = path.join (__dirname, sFilename);
+            sTSQL = fs.readFileSync (sSQLFile, 'utf8');
+         }
+
+         for (let i=0; i < asToken.length; i++)
+         {
+            aRegex.push (new RegExp (this.#EscapeRegExp (asToken[i][0]), "g"));
+         }            
+
          const statements = sTSQL.split(/^\s*GO\s*$/im);
 
          // Create connection
          await sql.connect (pConfig);
 
-         for (const stmt of statements)
+         for (let stmt of statements)
          {
             if (stmt.trim ())
             {
+               for (let i=0; i < aRegex.length; i++)
+               {
+                  stmt = stmt.replace (aRegex[i], asToken[i][1]);
+               }
+
                await sql.query (stmt);
             }
          }
 
          await sql.close ();
 
-         console.log ('Successfully installed (' + sFilename + ')');      
+         console.log ('Successfully installed (' + sFilename + ')');
+
+         bResult = true;
       } 
       catch (err) 
       {
          console.error ('Error executing SQL:', err.message);
       }
+
+      return bResult;
    }
 
    async #IsDBInstalled ()
