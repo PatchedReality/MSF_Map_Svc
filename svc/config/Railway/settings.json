@@ -14,7 +14,10 @@
 
       "_comment3": "Server Port & Admin Key",
       "nPort": "<PORT>",
-      "key":   "<MVSADMINKEY>"
+      "key":   "<MVSADMINKEY>",
+
+      "_comment4": "CompanyID",
+      "sCompanyId": "<MY_COMPANY_ID>"
    },
 
    "SQL": {

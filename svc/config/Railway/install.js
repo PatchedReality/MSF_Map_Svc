@@ -31,6 +31,7 @@ class MVSF_Map_Install
    constructor ()
    {
       this.#ReadFromEnv (Settings.SQL.config, [ "host", "port", "user", "password", "database" ]);
+      this.#ReadFromEnv (Settings.MVSF,   [ "nPort", "key", "sCompanyId" ]);
    }
 
    async Run ()
@@ -63,6 +64,7 @@ class MVSF_Map_Install
          // Check for PUBLIC_DOMAIN first, fallback to RAILWAY_PUBLIC_DOMAIN for Railway compatibility
          const sPublicDomain = process.env.PUBLIC_DOMAIN || process.env.RAILWAY_PUBLIC_DOMAIN || '';
          sContent = sContent.replace (/<PUBLIC_DOMAIN>/g, sPublicDomain);
+         sContent = sContent.replace (/<MY_COMPANY_ID>/g, Settings.MVSF.sCompanyId);
 
          fs.writeFileSync (path.join (sFabricPath, 'fabric.msf'), sContent, 'utf8');
       }
