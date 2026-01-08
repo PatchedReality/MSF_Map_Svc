@@ -20,12 +20,14 @@
    "SQL": {
       "type": "MSSQL",
 
-      "_comment0": "Keys under Install, will only be used when installing your DB",
-      "_comment1": "db_name - Name of the Database you wish to create",
+      "_comment1": "Keys under Install, will only be used when installing your DB",
+      "_comment2": "db_name - Name of the Database you wish to create",
       "_comment3": "login_name - Specifies the name of the login to grant execute rights.",
+      "_comment4": "pathname - Full pathname (without the trailing backslash) of your new database's data and log files",
       "install": {
          "db_name":           "",
-         "login_name":        ""
+         "login_name":        "",
+         "pathname":          ""
       },
 
       "config": {

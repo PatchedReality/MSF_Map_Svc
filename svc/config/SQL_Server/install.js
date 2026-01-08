@@ -31,27 +31,19 @@ class MVSF_Map_Install
    constructor ()
    {
       this.#ReadFromEnv (Settings.SQL.config, [ "connectionString" ]);
-      this.#ReadFromEnv (Settings.SQL.install, [ "db_name", "login_name" ]);
+      this.#ReadFromEnv (Settings.SQL.install, [ "db_name", "login_name", "pathname" ]);
    }
 
    async Run ()
    {
-      let bResult = await this.#IsDBInstalled ();
-
-      if (bResult == false)
-      {
-         console.log ('Installion Starting...');
+      console.log ('Installion Starting...');
          
-//         this.#ProcessFabricConfig ();
+      let bResult = await this.#ExecSQL ('MSF_Map.sql', true, [['[{MSF_Map}]', Settings.SQL.install.db_name], ['{Login_Name}', Settings.SQL.install.login_name], ['{Pathname}', Settings.SQL.install.pathname]]);
 
-         console.log ('Creating Database...');
-         bResult = await this.#ExecSQL ('MSF_Map.sql', true, [['[{MSF_Map}]', Settings.SQL.install.db_name], ['{Login_Name}', Settings.SQL.install.login_name]]);
-
-         if (bResult)
-            console.log ('Installation SUCCESS!!');
-         else
-            console.log ('Installation FAILURE!!');
-      }
+      if (bResult)
+         console.log ('Installation SUCCESS!!');
+      else
+         console.log ('Installation FAILURE!!');
    }
 
    #GetToken (sToken)
@@ -93,7 +85,7 @@ class MVSF_Map_Install
       if (bCreate)
          pConfig.connectionString = pConfig.connectionString.replace (/Database=[^;]*;/i, "");  // Remove database from config to connect without it
 
-      console.log ('Installing (' + sFilename + ')...');
+      console.log ('Starting (' + sFilename + ')...');
      
       try 
       {
@@ -128,7 +120,7 @@ class MVSF_Map_Install
 
          await sql.close ();
 
-         console.log ('Successfully installed (' + sFilename + ')');
+         console.log ('Completed (' + sFilename + ')');
 
          bResult = true;
       } 
@@ -137,44 +129,6 @@ class MVSF_Map_Install
          console.error ('Error executing SQL:', err.message);
       }
 
-      return bResult;
-   }
-
-   async #IsDBInstalled ()
-   {
-      const pConfig = { ...Settings.SQL.config };
-      let bResult = false;
-      const match = pConfig.connectionString.match(/Database=([^;]+)/i);
-
-      if (match)
-      {
-         const sDB = match[1];
-
-         pConfig.connectionString = pConfig.connectionString.replace (/Database=[^;]*;/i, "");  // Remove database from config to connect without it
-         try 
-         {
-            // Create connection
-            await sql.connect (pConfig);
-
-            // Check if database exists
-            const result = await sql.query `SELECT 1 FROM sys.databases WHERE name= ${sDB}`
-
-            if (result.recordsets[0].length > 0)
-            {
-               console.log ('Database is already installed.');
-               bResult = true;
-            }
-            else console.log ('Database does not exist.');
-
-            await sql.close ();
-         } 
-         catch (err) 
-         {
-            console.error ('Error executing SQL:', err.message);
-         } 
-      }
-      else console.error ('Failed to provide a Database name in the connection string');
-      
       return bResult;
    }
 }
