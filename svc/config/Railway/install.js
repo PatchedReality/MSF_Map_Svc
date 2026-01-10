@@ -42,8 +42,6 @@ class MVSF_Map_Install
       {
          console.log ('Starting Installation...');
          
-         this.#ProcessFabricConfig ();
-
          bResult = await this.#ExecSQL ('MSF_Map.sql', true, [['[{MSF_Map}]', Settings.SQL.config.database]] );
 
          if (bResult)
@@ -52,6 +50,8 @@ class MVSF_Map_Install
 
             this.Install ('sample', '');
             bResult = await this.#ExecSQL2 ([['[{MSF_Map}]', Settings.SQL.config.database]] );
+
+            this.#ProcessFabricConfig ();
 
             if (bResult)
                console.log ('Installation successfully completed...');
