@@ -46,7 +46,6 @@ class MVSF_Map_Install
 
          if (bResult)
          {
-            this.Install ('sample', '');
             bResult = await this.#ExecSQL2 ([['[{MSF_Map}]', Settings.SQL.config.database]] );
 
             if (bResult)
@@ -58,6 +57,7 @@ class MVSF_Map_Install
       else console.log ('DB Exists aborting installation...');
 
       console.log ('Running Config Scripts...');
+      this.Install ('sample', '');
       this.#ProcessFabricConfig ();
       this.Install ('objects', 'objects');
    }
