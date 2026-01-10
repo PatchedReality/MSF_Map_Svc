@@ -178,6 +178,7 @@ class MVSF_Map_Install
 
    async #ExecSQL (sFilename, bCreate, asToken)
    {
+      let bResult = false;
       const sSQLFile = path.join (__dirname, sFilename);
       const pConfig = { ...Settings.SQL.config };
       let pConn;
@@ -235,6 +236,7 @@ class MVSF_Map_Install
                }
          }
 
+         bResult = true;
          console.log ('Successfully installed (' + sFilename + ')');      
       } 
       catch (err) 
@@ -248,6 +250,8 @@ class MVSF_Map_Install
             await pConn.end ();
          }
       }
+
+      return bResult;
    }
 
    async #IsDBInstalled ()
