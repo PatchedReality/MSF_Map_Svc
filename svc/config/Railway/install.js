@@ -49,8 +49,6 @@ class MVSF_Map_Install
             this.Install ('sample', '');
             bResult = await this.#ExecSQL2 ([['[{MSF_Map}]', Settings.SQL.config.database]] );
 
-            this.#ProcessFabricConfig ();
-
             if (bResult)
                console.log ('Installation successfully completed...');
             else
@@ -59,6 +57,8 @@ class MVSF_Map_Install
       }
       else console.log ('DB Exists aborting installation...');
 
+      console.log ('Running Config Scripts...');
+      this.#ProcessFabricConfig ();
       this.Install ('objects', 'objects');
    }
 
@@ -73,10 +73,7 @@ class MVSF_Map_Install
             if (err)
                console.error ('Error copying folder:', err);
             else
-            {
-               console.log ('Sample Files copied');
-               this.Run ();
-            }
+               console.log ('Folder: (' + sSrcFolder + ') created');
          });
       }
    }
