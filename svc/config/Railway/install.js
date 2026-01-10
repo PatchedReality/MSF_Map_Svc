@@ -44,20 +44,28 @@ class MVSF_Map_Install
          
          this.#ProcessFabricConfig ();
 
-         this.Install ();
-
          bResult = await this.#ExecSQL ('MSF_Map.sql', true, [['[{MSF_Map}]', Settings.SQL.config.database]] );
 
          if (bResult)
-            console.log ('Installation successfully completed...');
+         {
+            this.Install ('objects', 'objects');
+
+            this.Install ('sample', '');
+            bResult = await this.#ExecSQL2 ([['[{MSF_Map}]', Settings.SQL.config.database]] );
+
+            if (bResult)
+               console.log ('Installation successfully completed...');
+            else
+               console.log ('Sample FAILURE!!');
+         }
       }
       else console.log ('DB Exists aborting installation...');
    }
 
-   Install ()
+   Install (sSrcFolder, sDstFolder)
    {
-      const sSrcPath = path.join (__dirname, '..', 'objects');
-      const sDstPath = path.join (__dirname, 'web/objects');
+      const sSrcPath = path.join (__dirname, '..', sSrcFolder);
+      const sDstPath = path.join (__dirname, 'web/' + sDstFolder);
 
       fs.cp (sSrcPath, sDstPath, { recursive: true }, (err) => {
          if (err)
@@ -68,6 +76,60 @@ class MVSF_Map_Install
             this.Run ();
          }
       });
+   }
+
+   async #ExecSQL2 (asToken)
+   {
+      let bResult = false;
+      const pConfig = { ...Settings.SQL.config };
+      let pConn;
+      let aRegex = [];
+      
+      console.log ('Sample STARTING ...');
+     
+      try 
+      {
+         for (let i=0; i < asToken.length; i++)
+         {
+            aRegex.push (new RegExp (this.#EscapeRegExp (asToken[i][0]), "g"));
+         }            
+
+         // Create connection
+         pConn = await mysql.createConnection (pConfig);
+
+         let stmt = "CALL set_RMRoot_RMPObject_Open ('0.0.0.0', 1, 1, 'My First Scene', 1, 0, 1, 0, 1, 0, '', '', 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 150, 150, 150, @nResult); SELECT @nResult AS nResult;";
+
+         let results = await pConn.query (stmt);
+
+         if (results[0][results[0].length - 1][0].nResult == 0)
+         {
+            stmt = "CALL set_RMPObject_RMPObject_Open ('0.0.0.0', 1, " + results[0][0][0].twRMPObjectIx + ", 'Hello World!', 1, 0, 1, 0, 1, 0, '', '/objects/capsule.glb', 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 134.65382385253906, 13.596150933846705, 129.60743890149325, @nResult); SELECT @nResult AS nResult;";
+
+            results = await pConn.query (stmt);
+
+            if (results[0][results[0].length - 1][0].nResult == 0)
+            {
+               bResult = true;
+            }
+            else
+               console.log ('Sample FAILED to create object');
+         }
+         else
+            console.log ('Sample FAILED to create scene');
+      } 
+      catch (err) 
+      {
+         console.error ('Error executing SQL:', err.message);
+      } 
+      finally 
+      {
+         if (pConn) 
+         {
+            await pConn.end ();
+         }
+      }
+
+      return bResult;
    }
 
    #ProcessFabricConfig ()
