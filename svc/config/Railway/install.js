@@ -31,7 +31,7 @@ class MVSF_Map_Install
    constructor ()
    {
       this.#ReadFromEnv (Settings.SQL.config, [ "host", "port", "user", "password", "database" ]);
-      this.#ReadFromEnv (Settings.MVSF,   [ "nPort", "key", "sCompanyId" ]);
+      this.#ReadFromEnv (Settings.MVSF,   [ "port", "key", "sCompanyId" ]);
    }
 
    async Run ()
