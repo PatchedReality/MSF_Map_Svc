@@ -57,11 +57,11 @@ class MVSF_Map_Install
       else console.log ('DB Exists aborting installation...');
 
       console.log ('Running Config Scripts...');
-      this.Install ('sample', '', true);
-      this.Install ('objects', 'objects', false);
+      this.Install ('sample', '');
+      this.Install ('objects', 'objects');
    }
 
-   Install (sSrcFolder, sDstFolder, bNext)
+   Install (sSrcFolder, sDstFolder)
    {
       const sSrcPath = path.join (__dirname, '..', sSrcFolder);
       const sDstPath = path.join (__dirname, 'web/' + sDstFolder);
@@ -74,9 +74,6 @@ class MVSF_Map_Install
             else
             {
                console.log ('Folder: (' + sSrcFolder + ') created');
-
-               if (bNext)
-                  this.#ProcessFabricConfig ();
             }
          });
       }
@@ -134,28 +131,6 @@ class MVSF_Map_Install
       }
 
       return bResult;
-   }
-
-   #ProcessFabricConfig ()
-   {
-      const sFabricPath = path.join (__dirname, 'web', 'fabric');
-
-      try
-      {
-         let sContent = fs.readFileSync (path.join (sFabricPath, 'sample.msf'), 'utf8');
-
-         // Replace all occurrences of <PUBLIC_DOMAIN> with the actual environment variable
-         // Check for PUBLIC_DOMAIN first, fallback to RAILWAY_PUBLIC_DOMAIN for Railway compatibility
-         const sPublicDomain = process.env.PUBLIC_DOMAIN || process.env.RAILWAY_PUBLIC_DOMAIN || '';
-         sContent = sContent.replace (/<PUBLIC_DOMAIN>/g, sPublicDomain);
-         sContent = sContent.replace (/<MY_COMPANY_ID>/g, Settings.MVSF.sCompanyId);
-
-         fs.writeFileSync (path.join (sFabricPath, 'fabric.msf'), sContent, 'utf8');
-      }
-      catch (err)
-      {
-         console.log ('Error processing sample.msf: ', err);
-      }
    }
 
    #GetToken (sToken)
