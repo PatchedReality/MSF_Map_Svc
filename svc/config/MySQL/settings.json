@@ -1,7 +1,7 @@
 {
    "_comment1": "'MVSF' contains Server Config Information for MVSF",
    "MVSF": {
-      "_comment1": "If your server is using SSL, rename '_SSL' to 'SSL'",
+      "_comment1": "Specify the location of SSL PEM Files",
       "SSL": {
          "key":   "./ssl/server.key",
          "cert":  "./ssl/server.cert"
@@ -16,6 +16,7 @@
       "_comment3_2": "port - The internal port the actual server application is listening on",
       "key":  "",
       "port": "",
+      "bUseSSL": true,
 
       "_comment3_3": "CompanyID",
       "sCompanyId": "",

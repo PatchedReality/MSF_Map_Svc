@@ -97,9 +97,9 @@ class MVSF_MapBase
          '      "sRequire":    "MVRP_Map",\n' +
          '      "sNamespace":  "' + this.#pSettings.MVSF.sCompanyId + '/map",\n' +
          '      "sService":    "MVIO",\n' +
-         '      "sConnect":    "secure=' + (this.#pSettings.MVSF.SSL ? 'true' : 'false') + ';server=' + this.#pSettings.MVSF.host + ';session=RP1",\n' +
+         '      "sConnect":    "secure=' + (this.#pSettings.MVSF.bUseSSL ? 'true' : 'false') + ';server=' + this.#pSettings.MVSF.host + ';session=RP1",\n' +
          '      "bAuth":       false,\n' +
-         '      "sRootUrl":    "http' + (this.#pSettings.MVSF.SSL ? 's' : '') + '://' + this.#pSettings.MVSF.host + '",\n' +
+         '      "sRootUrl":    "http' + (this.#pSettings.MVSF.bUseSSL ? 's' : '') + '://' + this.#pSettings.MVSF.host + '",\n' +
          '      "wClass":      ' + num1 + ',\n' +
          '      "twObjectIx":  ' + num2 + '\n' +
          '   }\n' +
