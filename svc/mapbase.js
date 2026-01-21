@@ -111,7 +111,7 @@ class MVSF_MapBase
    {
       if (pMVSQL)
       {
-         this.ReadFromEnv (this.#pSettings.MVSF, [ "port", "key" ]);
+         this.ReadFromEnv (this.#pSettings.MVSF, [ "port", "key", "sCompanyId", "host" ]);
 
          this.#pServer = new MVSF (this.#pSettings.MVSF, require ('./handler.json'), __dirname, new AuthSimple (this.#pSettings), 'application/json');
          const pApp = this.#pServer.LoadHtmlSite (__dirname, [ './web' ]);
