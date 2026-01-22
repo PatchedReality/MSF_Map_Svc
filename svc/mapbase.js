@@ -77,10 +77,12 @@ class MVSF_MapBase
    #pServer;
    #pSettings;
    #sObjectPath;
+   #nPort;
 
-   constructor (asConfigFields, pSettings)
+   constructor (asConfigFields, pSettings, nPort)
    {
       this.#pSettings = pSettings;
+      this.#nPort     = nPort;
 
       this.ReadFromEnv (this.#pSettings.SQL.config, asConfigFields);
 
@@ -112,6 +114,8 @@ class MVSF_MapBase
       if (pMVSQL)
       {
          this.ReadFromEnv (this.#pSettings.MVSF, [ "port", "key", "sCompanyId", "host" ]);
+         if (this.#nPort != 0)
+            this.#pSettings.MVSF.port += this.#nPort;
 
          this.#pServer = new MVSF (this.#pSettings.MVSF, require ('./handler.json'), __dirname, new AuthSimple (this.#pSettings), 'application/json');
          const pApp = this.#pServer.LoadHtmlSite (__dirname, [ './web' ]);
