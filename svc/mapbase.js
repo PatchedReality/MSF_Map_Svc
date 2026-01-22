@@ -173,8 +173,13 @@ class MVSF_MapBase
 
    #GetToken (sToken)
    {
-      const match = sToken.match (/<([^>]+)>/);
-      return match ? match[1] : null;
+      if (sToken)
+      {
+         const match = sToken.match (/<([^>]+)>/);
+         return match ? match[1] : null;
+      }
+      
+      return null;
    }
 }
 
