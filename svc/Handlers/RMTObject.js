@@ -155,6 +155,7 @@ class HndlrRMTObject extends MVHANDLER
                SqlData: {
                   sProc: 'set_RMTObject_RMTObject_Open',
                   aData: [ 'twRMTObjectIx',
+                           'Name_wsRMTObjectId',
                            'Type_bType', 'Type_bSubtype', 'Type_bFiction',
                            'Owner_twRPersonaIx', 
                            'Resource_qwResource', 'Resource_sName', 'Resource_sReference', 
