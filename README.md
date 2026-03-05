@@ -28,7 +28,7 @@ MSF Map Service is a backend service that:
 - Exposes **REST** and **Socket.IO** APIs for metaverse map operations
 - Stores spatial fabric data in **MySQL** or **SQL Server**
 - Serves a web-based **Scene Assembler** editor for building 3D scenes from GLB/GLTF models
-- Integrates with **Metaversal Fabric** for multi-user editing and RP1 (VR/AR)
+- Integrates with **Metaversal Fabric** for multi-user access in a Metaverse Browser (VR/AR)
 
 ---
 
@@ -37,7 +37,7 @@ MSF Map Service is a backend service that:
 - **Node.js** (LTS recommended)
 - **Database**: MySQL or SQL Server
 - **SSL certificate** (Let's Encrypt or existing trusted certificate)
-- **RP1 CompanyId** from [RP1 dev portal](https://dev.rp1.com)
+- **RP1 CompanyId** from [RP1 Developer Center](https://dev.rp1.com) (Requires Developer Account registration and creation of a company. Free.)
 
 ---
 
@@ -293,7 +293,7 @@ MSF_Map_Svc/
 | **@metaversalcorp/mvsf** | Metaversal Fabric framework (REST, Socket.IO) |
 | **@metaversalcorp/mvsql_mysql** / **mvsql_mssql** | Database adapters |
 | **Handlers (RMBase, RMRoot, RMCObject, RMPObject, RMTObject)** | Map object CRUD and events |
-| **Scene Assembler (sa/)** | Web-based 3D scene editor; see [sa/README.md](sa/README.md) |
+| **Scene Assembler (sa/)** | Web-based 3D scene editor; see [sa/README.md](https://github.com/MetaversalCorp/SceneAssembler/blob/main/README.md) |
 
 ### Build scripts
 
@@ -316,7 +316,7 @@ Contributions are welcome. The project is licensed under Apache-2.0.
 1. **Architecture**
    - Server: `svc/` — Node.js + MVSF; handlers extend `MVHANDLER`
    - Database: `db/MySQL/` and `db/SQL_Server/` — tables, functions, stored procedures
-   - Frontend: `sa/site/` — Scene Assembler; see [sa/README.md](sa/README.md) and [sa/site/js/README.md](sa/site/js/README.md)
+   - Frontend: `sa/site/` — Scene Assembler; see [sa/README.md](https://github.com/MetaversalCorp/SceneAssembler/blob/main/README.md) and [sa/site/js/README.md](https://github.com/MetaversalCorp/SceneAssembler/blob/main/site/js/README.md)
 
 2. **Adding features**
    - **Handlers**: Add or extend handlers in `svc/Handlers/`; register in `handler.json`
@@ -334,7 +334,7 @@ Contributions are welcome. The project is licensed under Apache-2.0.
 
 5. **Reporting issues**
    - Open an issue on GitHub
-   - For installation problems, the project maintains a [Discord](https://discord.gg/open-metaverse-browser) community
+   - For installation problems, the project maintains a [Discord](https://rp1.com/discord) community
 
 ---
 
