@@ -18,6 +18,7 @@
 
 const fs            = require ('fs');
 const path          = require ('path');
+const util          = require ('util');
 const sql           = require ('mssql/msnodesqlv8');
 
 const Settings      = require ('./settings.json');
@@ -31,14 +32,14 @@ class MVSF_Map_Install
    constructor ()
    {
       this.#ReadFromEnv (Settings.SQL.config, [ "connectionString" ]);
-      this.#ReadFromEnv (Settings.SQL.install, [ "db_name", "login_name", "pathname" ]);
+      this.#ReadFromEnv (Settings.SQL.install, [ "db_name", "login_name" ]);
    }
 
    async Run ()
    {
       console.log ('Installion Starting...');
          
-      let bResult = await this.#ExecSQL ('MSF_Map.sql', true, [['[{MSF_Map}]', Settings.SQL.install.db_name], ['{Login_Name}', Settings.SQL.install.login_name], ['[{Pathname}]', Settings.SQL.install.pathname]]);
+      let bResult = await this.#ExecSQL ('MSF_Map.sql', true, [['[{MSF_Map}]', Settings.SQL.install.db_name], ['{Login_Name}', Settings.SQL.install.login_name]]);
 
       if (bResult)
          console.log ('Installation SUCCESS!!');
@@ -131,7 +132,13 @@ class MVSF_Map_Install
          console.error ('Error executing SQL:', err);
          // `err.message` can be an object for `mssql/msnodesqlv8`, which becomes `[object Object]`.
          if (err && err.message !== undefined)
+         {
             console.error ('Error message field:', err.message);
+            if (typeof err.message === 'object')
+               console.error ('Error message details:', util.inspect (err.message, { depth: null, colors: false }));
+         }
+         if (err && err.originalError)
+            console.error ('Original error details:', util.inspect (err.originalError, { depth: null, colors: false }));
          if (typeof sCurrentStmt === 'string' && sCurrentStmt.trim ())
             console.error ('SQL fragment (first 2000 chars):', sCurrentStmt.slice (0, 2000));
       }

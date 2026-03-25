@@ -43,11 +43,9 @@
          "_comment6_1": "The following values are only used on install:",
          "_comment6_2": "db_name - Name of the Database you wish to create",
          "_comment6_3": "login_name - Specifies the name of the login to grant execute rights.",
-         "_comment6_4": "pathname - Full pathname (without the trailing backslash) of your new database's data and log files",
 
          "db_name":           "",
-         "login_name":        "",
-         "pathname":          ""
+         "login_name":        ""
       },
 
       "config": {
