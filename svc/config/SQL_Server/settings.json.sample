@@ -51,7 +51,7 @@
       "config": {
          "_comment7": "connectionString - Database Connection String",
 
-         "connectionString": ""
+         "connectionString": "Driver={ODBC Driver 18 for SQL Server};Server=your_server;Database=YourDatabase;UID=myuser;PWD=StrongP@ssword123;TrustServerCertificate=yes;"
       }
    }
 }
