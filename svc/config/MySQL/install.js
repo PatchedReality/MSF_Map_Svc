@@ -33,25 +33,16 @@ class MVSF_Map_Install
       this.#ReadFromEnv (Settings.SQL.config, [ "host", "port", "user", "password", "database" ]);
    }
 
-   async Run ()
-   {
-      let bResult = await this.#IsDBInstalled ();
+    async Run() {
+        console.log('Starting Installation...');
 
-      if (bResult == false)
-      {
-         console.log ('Starting Installation...');
-         
-//         this.#ProcessFabricConfig ();
+        const bResult = await this.#ExecSQL('MSF_Map.sql', true, [['[{MSF_Map}]', Settings.SQL.config.database]]);
 
-         bResult = await this.#ExecSQL ('MSF_Map.sql', true, [['[{MSF_Map}]', Settings.SQL.config.database]] );
+        if (bResult)
+            console.log('Installation successfully completed...');
+    }
 
-         if (bResult)
-            console.log ('Installation successfully completed...');
-      }
-      else console.log ('DB Exists aborting installation...');
-   }
-
-   #GetToken (sToken)
+       #GetToken (sToken)
    {
       const match = sToken.match (/<([^>]+)>/);
       return match ? match[1] : null;
