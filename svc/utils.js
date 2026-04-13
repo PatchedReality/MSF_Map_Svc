@@ -29,27 +29,6 @@ var g_nTimeout = 0;
 **                                                   Imported Functions                                                       **
 *******************************************************************************************************************************/
 
-function MemResult (pResult, result)
-{
-   pResult.nResult = result.output.nResult;
-
-   if (pResult.nResult == 0)
-   {
-      pResult.Parent = JSON.parse (result.recordsets[0][0].Object);
-      pResult.aChild = [];
-
-      for (let i=1; i < result.recordsets.length; i++)
-      {
-         pResult.aChild[i-1] = [];
-         for (let j=0; j < result.recordsets[i].length; j++)
-         {
-            pResult.aChild[i-1].push (JSON.parse (result.recordsets[i][j].Object));
-         }
-      }
-   }
-   else RawResult (pResult, result);
-}
-
 function RawResult (pResult, result)
 {
    pResult.nResult = result.output.nResult;
@@ -74,10 +53,7 @@ function RunQuery (Session, pData, fnRSP, fn, pSQLData)
          {
             if (result != null)
             {
-               if (pSQLData.Param == 0)
-                  MemResult (pResult, result);
-               else
-                  RawResult (pResult, result);
+               RawResult (pResult, result);
             }
 
             fnRSP (fn, pResult);
@@ -120,11 +96,7 @@ function RunQuery2Ex (Session, pData, fnRSP, fn, bRecover, pSQLData)
                   }
                   else
                   {
-if (pSQLData.Param == 0)
-   MemResult (pResult, result);
-else
-   RawResult (pResult, result);
-//                     pResult.aResultSet = result.recordsets;
+                     RawResult (pResult, result);
 
 //                     EventFetch ();
                   }

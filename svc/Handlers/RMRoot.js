@@ -84,7 +84,7 @@ class HndlrRMRoot extends MVHANDLER
                            'Owner_twRPersonaIx', 
                            'Resource_qwResource', 'Resource_sName', 'Resource_sReference', 
                            'Transform_Position_dX', 'Transform_Position_dY', 'Transform_Position_dZ', 'Transform_Rotation_dX', 'Transform_Rotation_dY', 'Transform_Rotation_dZ', 'Transform_Rotation_dW', 'Transform_Scale_dX', 'Transform_Scale_dY', 'Transform_Scale_dZ',      
-                           'Orbit_Spin_tmPeriod', 'Orbit_Spin_tmStart', 'Orbit_Spin_dA', 'Orbit_Spin_dB', 
+                           'Orbit_Spin_tmPeriod', 'Orbit_Spin_tmOrigin', 'Orbit_Spin_dA', 'Orbit_Spin_dB', 
                            'Bound_dX', 'Bound_dY', 'Bound_dZ', 
                            'Properties_fMass', 'Properties_fGravity', 'Properties_fColor', 'Properties_fBrightness',  'Properties_fReflectivity' 
                   ],
