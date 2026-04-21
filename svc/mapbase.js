@@ -99,7 +99,7 @@ class MVSF_MapBase
       (
          '{\n' +
          '   "map": {\n' +
-         '      "sRequire":    "MVRP_Map",\n' +
+         '      "sRequire":    "MVRP_Dev,MVRP_Map",\n' +
          '      "sNamespace":  "' + this.#pSettings.MVSF.sCompanyId + '/map",\n' +
          '      "sService":    "MVIO",\n' +
          '      "sConnect":    "secure=' + (this.#pSettings.MVSF.LAN.SSL.bUseSSL ? 'true' : 'false') + ';server=' + this.#pSettings.MVSF.WAN.host + ';port=' + this.#pSettings.MVSF.WAN.port + ';session=RP1",\n' +
